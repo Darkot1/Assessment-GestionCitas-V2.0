@@ -1,5 +1,6 @@
 <script setup>
-import { useForm } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
+import { watch } from 'vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -14,6 +15,19 @@ const form = useForm({
   name: props.user.name,
   email: props.user.email,
   role: props.user.role,
+  // Campos de Doctor
+  specialty: props.user.doctor?.specialty || '',
+  availability: props.user.doctor?.availability ? JSON.stringify(props.user.doctor.availability) : JSON.stringify({
+    monday: '09:00 - 17:00',
+    tuesday: '09:00 - 17:00',
+    wednesday: '09:00 - 17:00',
+    thursday: '09:00 - 17:00',
+    friday: '09:00 - 17:00'
+  }),
+  // Campos de Paciente
+  date_of_birth: props.user.patient?.date_of_birth || '',
+  phone: props.user.patient?.phone || props.user.doctor?.phone || '',
+  address: props.user.patient?.address || props.user.doctor?.address || '',
 });
 
 const submit = () => {
@@ -33,6 +47,7 @@ const submit = () => {
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
           <form @submit.prevent="submit">
+            <!-- Campos básicos de usuario -->
             <div class="mb-4">
               <InputLabel for="name" value="Nombre" />
               <TextInput
@@ -71,6 +86,75 @@ const submit = () => {
               </select>
               <InputError :message="form.errors.role" class="mt-2" />
             </div>
+
+            <!-- Campos de Doctor -->
+            <template v-if="form.role === 'doctor'">
+              <div class="mb-4">
+                <InputLabel for="specialty" value="Especialidad" />
+                <TextInput
+                  id="specialty"
+                  v-model="form.specialty"
+                  type="text"
+                  class="mt-1 block w-full"
+                  required
+                />
+                <InputError :message="form.errors.specialty" class="mt-2" />
+              </div>
+
+              <div class="mb-4">
+                <InputLabel for="availability" value="Disponibilidad" />
+                <textarea
+                  id="availability"
+                  v-model="form.availability"
+                  class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                  rows="5"
+                  required
+                ></textarea>
+                <InputError :message="form.errors.availability" class="mt-2" />
+              </div>
+            </template>
+
+            <!-- Campos de Paciente -->
+            <template v-if="form.role === 'patient'">
+              <div class="mb-4">
+                <InputLabel for="date_of_birth" value="Fecha de Nacimiento" />
+                <TextInput
+                  id="date_of_birth"
+                  v-model="form.date_of_birth"
+                  type="date"
+                  class="mt-1 block w-full"
+                  required
+                />
+                <InputError :message="form.errors.date_of_birth" class="mt-2" />
+              </div>
+            </template>
+
+            <!-- Campos comunes para Doctor y Paciente -->
+            <template v-if="form.role === 'doctor' || form.role === 'patient'">
+              <div class="mb-4">
+                <InputLabel for="phone" value="Teléfono" />
+                <TextInput
+                  id="phone"
+                  v-model="form.phone"
+                  type="text"
+                  class="mt-1 block w-full"
+                  required
+                />
+                <InputError :message="form.errors.phone" class="mt-2" />
+              </div>
+
+              <div class="mb-4">
+                <InputLabel for="address" value="Dirección" />
+                <TextInput
+                  id="address"
+                  v-model="form.address"
+                  type="text"
+                  class="mt-1 block w-full"
+                  required
+                />
+                <InputError :message="form.errors.address" class="mt-2" />
+              </div>
+            </template>
 
             <div class="flex items-center justify-end mt-4">
               <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">

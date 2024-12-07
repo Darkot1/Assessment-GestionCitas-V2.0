@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\DestroyUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Models\Doctor;
+use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -79,7 +81,60 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        $user->update($request->all());
+        $validated = $request->validated();
+
+        // Actualizar usuario base
+        $user->update($validated);
+
+        // Si cambia a doctor
+        if ($request->role === 'doctor') {
+            // Eliminar registro de paciente si existe
+            if ($user->patient) {
+                $user->patient->delete();
+            }
+
+            // Crear o actualizar doctor
+            if ($user->doctor) {
+                $user->doctor->update([
+                    'specialty' => $request->specialty,
+                    'phone' => $request->phone,
+                    'address' => $request->address,
+                    'availability' => $request->availability,
+                ]);
+            } else {
+                Doctor::create([
+                    'user_id' => $user->id,
+                    'specialty' => $request->specialty,
+                    'phone' => $request->phone,
+                    'address' => $request->address,
+                    'availability' => $request->availability,
+                ]);
+            }
+        }
+
+        // Si cambia a paciente
+        if ($request->role === 'patient') {
+            // Eliminar registro de doctor si existe
+            if ($user->doctor) {
+                $user->doctor->delete();
+            }
+
+            // Crear o actualizar paciente
+            if ($user->patient) {
+                $user->patient->update([
+                    'date_of_birth' => $request->date_of_birth,
+                    'phone' => $request->phone,
+                    'address' => $request->address,
+                ]);
+            } else {
+                Patient::create([
+                    'user_id' => $user->id,
+                    'date_of_birth' => $request->date_of_birth,
+                    'phone' => $request->phone,
+                    'address' => $request->address,
+                ]);
+            }
+        }
 
         return redirect()->route('users.index')
             ->with('success', 'Usuario actualizado exitosamente.');

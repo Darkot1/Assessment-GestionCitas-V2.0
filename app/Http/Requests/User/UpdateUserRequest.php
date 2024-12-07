@@ -20,7 +20,24 @@ class UpdateUserRequest extends FormRequest
             'email' => 'email|unique:users,email,' . $this->user->id,
             'role' => 'in:patient,doctor,admin',
         ];
-        
+
+        if ($this->role === 'doctor') {
+            $rules += [
+                'specialty' => 'required|string|max:255',
+                'phone' => 'required|string|max:20',
+                'address' => 'required|string|max:255',
+                'availability' => 'required|json',
+            ];
+        }
+
+        if ($this->role === 'patient') {
+            $rules += [
+                'date_of_birth' => 'required|date',
+                'phone' => 'required|string|max:20',
+                'address' => 'required|string|max:255',
+            ];
+        }
+
         return $rules;
     }
 }
