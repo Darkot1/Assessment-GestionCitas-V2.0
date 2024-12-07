@@ -22,6 +22,7 @@ return new class extends Migration
             $table->enum('status', ['scheduled', 'completed', 'cancelled'])->default('scheduled');
             $table->timestamps();
             $table->unique(['doctor_id', 'date', 'time']);
+            $table->softDeletes(); 
         });
     }
 

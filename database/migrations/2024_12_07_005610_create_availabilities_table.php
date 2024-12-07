@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('time_slot', 50);
             $table->enum('status', ['available', 'booked', 'unavailable'])->default('available');
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 

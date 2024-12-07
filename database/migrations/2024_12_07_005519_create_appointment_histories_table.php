@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('action', ['created', 'updated', 'cancelled', 'completed']);
             $table->text('notes')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

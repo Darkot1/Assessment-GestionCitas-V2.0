@@ -10,20 +10,16 @@ class Doctor extends Model
         'user_id',
         'specialty',
         'availability',
+        'phone',
+        'address',
+    ];
+
+    protected $casts = [
+        'availability' => 'array',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function availabilities()
-    {
-        return $this->hasMany(Availability::class);
-    }
-
-    public function appointments()
-    {
-        return $this->hasMany(Appointment::class);
     }
 }
