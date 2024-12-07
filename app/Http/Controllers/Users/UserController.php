@@ -88,7 +88,7 @@ class UserController extends Controller
 
         // Si cambia a doctor
         if ($request->role === 'doctor') {
-            // Eliminar registro de paciente si existe
+            // Eliminar registro de paciente 
             if ($user->patient) {
                 $user->patient->delete();
             }
@@ -114,7 +114,7 @@ class UserController extends Controller
 
         // Si cambia a paciente
         if ($request->role === 'patient') {
-            // Eliminar registro de doctor si existe
+            // Eliminar registro de doctor
             if ($user->doctor) {
                 $user->doctor->delete();
             }
@@ -147,8 +147,46 @@ class UserController extends Controller
     {
         $request->validated();
 
+        // Eliminar doctor
+        if ($user->doctor) {
+            $user->doctor->delete();
+        }
+
+        // Eliminar paciente
+        if ($user->patient) {
+            $user->patient->delete();
+        }
+
         $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'Usuario desactivado exitosamente.');
+        return redirect()->route('users.index')
+            ->with('success', 'Usuario desactivado exitosamente.');
+    }
+
+    public function deleted()
+    {
+        $deletedUsers = User::onlyTrashed()->with(['doctor', 'patient'])->get();
+
+        return Inertia::render('User/DeletedUsers', compact('deletedUsers')); // Cambiar a DeletedUsers
+    }
+
+    public function restore($id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+
+        // Restaurar doctor
+        Doctor::onlyTrashed()
+            ->where('user_id', $id)
+            ->restore();
+
+        // Restaurar paciente
+        Patient::onlyTrashed()
+            ->where('user_id', $id)
+            ->restore();
+
+        $user->restore();
+
+        return redirect()->route('users.deleted')
+            ->with('success', 'Usuario restaurado exitosamente.');
     }
 }

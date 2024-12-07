@@ -30,8 +30,10 @@ Route::middleware([
         Route::get('/', [UserController::class, 'index'])->name('users.index');
         Route::get('/registrar', [UserController::class, 'create'])->name('users.create');
         Route::post('/store', [UserController::class, 'store'])->name('users.store');
-        Route::get('/{user}', [UserController::class, 'show'])->name('users.show');
+        Route::get('/eliminados', [UserController::class, 'deleted'])->name('users.deleted');
+        Route::put('/restaurar/{user}', [UserController::class, 'restore'])->name('users.restore');
         Route::get('/editar/{user}', [UserController::class, 'edit'])->name('users.edit');
+        Route::get('/{user}', [UserController::class, 'show'])->name('users.show');
         Route::put('/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
