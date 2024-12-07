@@ -29,13 +29,6 @@ defineProps({
             </div>
           </div>
 
-          <div class="mb-6">
-            <h3 class="text-lg font-medium text-gray-900">Horario de Atención</h3>
-            <div class="mt-4">
-              <pre class="text-sm text-gray-600 bg-gray-50 p-4 rounded-md">{{ JSON.stringify(doctor.availability, null, 2) }}</pre>
-            </div>
-          </div>
-
           <div class="flex justify-end space-x-4">
             <Link
               v-if="$page.props.auth.user.role === 'admin' || $page.props.auth.user.id === doctor.user_id"

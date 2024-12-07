@@ -14,7 +14,6 @@ const form = useForm({
   specialty: props.doctor.specialty,
   phone: props.doctor.phone,
   address: props.doctor.address,
-  availability: JSON.stringify(props.doctor.availability),
 });
 
 const submit = () => {
@@ -68,18 +67,6 @@ const submit = () => {
                 required
               />
               <InputError :message="form.errors.address" class="mt-2" />
-            </div>
-
-            <div class="mb-6">
-              <InputLabel for="availability" value="Disponibilidad" />
-              <textarea
-                id="availability"
-                v-model="form.availability"
-                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                rows="5"
-                required
-              ></textarea>
-              <InputError :message="form.errors.availability" class="mt-2" />
             </div>
 
             <div class="flex items-center justify-end">

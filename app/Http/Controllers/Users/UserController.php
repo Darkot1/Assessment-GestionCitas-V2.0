@@ -82,57 +82,65 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user)
     {
         $validated = $request->validated();
+        $oldRole = $user->role;
 
         // Actualizar usuario base
         $user->update($validated);
 
-        // Si cambia a doctor
+        // Si cambia a doctor o ya es doctor
         if ($request->role === 'doctor') {
-            // Eliminar registro de paciente 
+            // Eliminar registro de paciente si existe
             if ($user->patient) {
                 $user->patient->delete();
             }
 
-            // Crear o actualizar doctor
+            // Actualizar o crear doctor
+            $doctorData = [
+                'specialty' => $request->specialty,
+                'phone' => $request->phone,
+                'address' => $request->address,
+            ];
+
             if ($user->doctor) {
-                $user->doctor->update([
-                    'specialty' => $request->specialty,
-                    'phone' => $request->phone,
-                    'address' => $request->address,
-                    'availability' => $request->availability,
-                ]);
+                $user->doctor->update($doctorData);
             } else {
                 Doctor::create([
                     'user_id' => $user->id,
-                    'specialty' => $request->specialty,
-                    'phone' => $request->phone,
-                    'address' => $request->address,
-                    'availability' => $request->availability,
+                    ...$doctorData
                 ]);
             }
         }
 
-        // Si cambia a paciente
+        // Si cambia a paciente o ya es paciente
         if ($request->role === 'patient') {
-            // Eliminar registro de doctor
+            // Eliminar registro de doctor si existe
             if ($user->doctor) {
                 $user->doctor->delete();
             }
 
-            // Crear o actualizar paciente
+            $patientData = [
+                'date_of_birth' => $request->date_of_birth,
+                'phone' => $request->phone,
+                'address' => $request->address,
+            ];
+
             if ($user->patient) {
-                $user->patient->update([
-                    'date_of_birth' => $request->date_of_birth,
-                    'phone' => $request->phone,
-                    'address' => $request->address,
-                ]);
+                $user->patient->update($patientData);
             } else {
                 Patient::create([
                     'user_id' => $user->id,
-                    'date_of_birth' => $request->date_of_birth,
-                    'phone' => $request->phone,
-                    'address' => $request->address,
+                    ...$patientData
                 ]);
+            }
+        }
+
+        // Si cambia a admin, eliminar roles anteriores
+        if ($request->role === 'admin') {
+            if ($user->doctor) {
+                $user->doctor->delete();
+            }
+            if ($user->patient) {
+                $user->patient->delete();
             }
         }
 

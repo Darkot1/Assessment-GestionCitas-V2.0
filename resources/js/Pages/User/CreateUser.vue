@@ -10,7 +10,7 @@ const form = useForm({
   name: '',
   email: '',
   password: '',
-  role: '',
+  role: '', 
 });
 
 const submit = () => {
@@ -67,22 +67,24 @@ const submit = () => {
             </div>
 
             <div class="mb-4">
-              <InputLabel for="role" value="Rol" />
+              <InputLabel for="role" value="Rol (Opcional)" />
               <select
                 id="role"
                 v-model="form.role"
                 class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                required
               >
-                <option value="">Selecciona un rol</option>
+                <option value="">Sin rol asignado</option>
                 <option value="admin">Administrador</option>
                 <option value="doctor">Doctor</option>
                 <option value="patient">Paciente</option>
               </select>
+              <p class="mt-1 text-sm text-gray-500">
+                Puede asignar un rol ahora o más tarde
+              </p>
               <InputError :message="form.errors.role" class="mt-2" />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
+            <div class="flex items-center justify-end">
               <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                 Crear Usuario
               </PrimaryButton>

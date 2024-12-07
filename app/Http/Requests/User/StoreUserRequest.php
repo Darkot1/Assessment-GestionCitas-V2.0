@@ -20,7 +20,6 @@ class StoreUserRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
-            'role' => 'in:patient,doctor,admin',
         ];
 
         return $rules;

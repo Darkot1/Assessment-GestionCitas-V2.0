@@ -14,12 +14,8 @@ class Doctor extends Model
         'specialty',
         'phone',
         'address',
-        'availability'
     ];
 
-    protected $casts = [
-        'availability' => 'json'
-    ];
 
     public function user()
     {

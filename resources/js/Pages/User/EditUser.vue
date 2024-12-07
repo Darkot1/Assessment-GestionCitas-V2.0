@@ -15,19 +15,22 @@ const form = useForm({
   name: props.user.name,
   email: props.user.email,
   role: props.user.role,
-  // Campos de Doctor
   specialty: props.user.doctor?.specialty || '',
-  availability: props.user.doctor?.availability ? JSON.stringify(props.user.doctor.availability) : JSON.stringify({
-    monday: '09:00 - 17:00',
-    tuesday: '09:00 - 17:00',
-    wednesday: '09:00 - 17:00',
-    thursday: '09:00 - 17:00',
-    friday: '09:00 - 17:00'
-  }),
-  // Campos de Paciente
+  phone: props.user.doctor?.phone || props.user.patient?.phone || '',
+  address: props.user.doctor?.address || props.user.patient?.address || '',
   date_of_birth: props.user.patient?.date_of_birth || '',
-  phone: props.user.patient?.phone || props.user.doctor?.phone || '',
-  address: props.user.patient?.address || props.user.doctor?.address || '',
+});
+
+// Observar cambios en el rol para mantener datos
+watch(() => form.role, (newRole, oldRole) => {
+  if (newRole === oldRole) return;
+
+  // Mantener datos comunes al cambiar roles
+  if ((oldRole === 'doctor' || oldRole === 'patient') &&
+      (newRole === 'doctor' || newRole === 'patient')) {
+    form.phone = form.phone || '';
+    form.address = form.address || '';
+  }
 });
 
 const submit = () => {
@@ -99,18 +102,6 @@ const submit = () => {
                   required
                 />
                 <InputError :message="form.errors.specialty" class="mt-2" />
-              </div>
-
-              <div class="mb-4">
-                <InputLabel for="availability" value="Disponibilidad" />
-                <textarea
-                  id="availability"
-                  v-model="form.availability"
-                  class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                  rows="5"
-                  required
-                ></textarea>
-                <InputError :message="form.errors.availability" class="mt-2" />
               </div>
             </template>
 

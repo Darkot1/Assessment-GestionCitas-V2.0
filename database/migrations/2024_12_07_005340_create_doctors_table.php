@@ -17,9 +17,8 @@ return new class extends Migration
             $table->string('specialty', 100);
             $table->string('phone', 20);
             $table->string('address', 255);
-            $table->json('availability');
             $table->timestamps();
-            $table->softDeletes(); 
+            $table->softDeletes();
         });
     }
 

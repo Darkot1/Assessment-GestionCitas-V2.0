@@ -26,7 +26,6 @@ class UpdateUserRequest extends FormRequest
                 'specialty' => 'required|string|max:255',
                 'phone' => 'required|string|max:20',
                 'address' => 'required|string|max:255',
-                'availability' => 'required|json',
             ];
         }
 

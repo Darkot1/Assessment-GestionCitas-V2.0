@@ -20,7 +20,6 @@ class UpdateDoctorRequest extends FormRequest
             'specialty' => 'string|max:255',
             'phone' => 'string|min:10|max:20',
             'address' => 'string|max:255',
-            'availability' => 'json',
         ];
     }
 }

@@ -17,13 +17,6 @@ const form = useForm({
     specialty: '',
     phone: '',
     address: '',
-    availability: JSON.stringify({
-        monday: '09:00 - 17:00',
-        tuesday: '09:00 - 17:00',
-        wednesday: '09:00 - 17:00',
-        thursday: '09:00 - 17:00',
-        friday: '09:00 - 17:00'
-    })
 });
 
 const submit = () => {
@@ -87,18 +80,6 @@ const submit = () => {
                                 required
                             />
                             <InputError :message="form.errors.address" class="mt-2" />
-                        </div>
-
-                        <div class="mb-6">
-                            <InputLabel for="availability" value="Disponibilidad" />
-                            <textarea
-                                id="availability"
-                                v-model="form.availability"
-                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                rows="5"
-                                required
-                            ></textarea>
-                            <InputError :message="form.errors.availability" class="mt-2" />
                         </div>
 
                         <div class="flex items-center justify-end">

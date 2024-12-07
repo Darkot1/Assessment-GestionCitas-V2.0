@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use App\Http\Requests\Doctor\StoreDoctorRequest;
 use App\Http\Requests\Doctor\UpdateDoctorRequest;
 use App\Http\Requests\Doctor\DestroyDoctorRequest;
+use App\Models\Availability;
 
 class DoctorController extends Controller
 {
@@ -19,7 +20,6 @@ class DoctorController extends Controller
     public function index()
     {
         $doctors = Doctor::with('user')->get();
-
         return Inertia::render('Doctor/IndexDoctor', compact('doctors'));
     }
 
@@ -43,12 +43,13 @@ class DoctorController extends Controller
     {
         $request->validated();
         $user = Auth::user();
+
+        // Crear doctor
         Doctor::create([
             'user_id' => $user->id,
             'specialty' => $request->specialty,
             'phone' => $request->phone,
             'address' => $request->address,
-            'availability' => $request->availability,
         ]);
 
         User::where('id', $user->id)->update(['role' => 'doctor']);

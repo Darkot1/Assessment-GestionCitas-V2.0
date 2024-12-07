@@ -14,11 +14,14 @@ return new class extends Migration
         Schema::create('availabilities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('doctor_id')->constrained('doctors')->onDelete('cascade');
-            $table->date('date');
-            $table->string('time_slot', 50);
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
+            $table->time('start_time');
+            $table->time('end_time');
             $table->enum('status', ['available', 'booked', 'unavailable'])->default('available');
+            $table->string('reason', 255)->nullable();
             $table->timestamps();
-            $table->softDeletes(); 
+            $table->softDeletes();
         });
     }
 
