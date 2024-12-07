@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Appointments\AppointmentController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -59,6 +60,15 @@ Route::middleware([
         Route::delete('/{patient}', [PatientController::class, 'destroy'])->name('patients.destroy');
     });
 
+    Route::prefix('cita')->group(function () {
+        Route::get('/', [AppointmentController::class, 'index'])->name('appointments.index');
+        Route::get('/registrar', [AppointmentController::class, 'create'])->name('appointments.create');
+        Route::post('/store', [AppointmentController::class, 'store'])->name('appointments.store');
+        Route::get('/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
+        Route::get('/editar/{appointment}', [AppointmentController::class, 'edit'])->name('appointments.edit');
+        Route::put('/{appointment}', [AppointmentController::class, 'update'])->name('appointments.update');
+        Route::delete('/{appointment}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
+    });
 
 
 });

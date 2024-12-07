@@ -12,7 +12,7 @@
                         <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Inicio
                         </NavLink>
-                        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                        <NavLink :href="route('appointments.index')" :active="route().current('appointments.index')">
                             Citas
                         </NavLink>
                         <NavLink :href="route('patients.index')" :active="route().current('patients.index')">

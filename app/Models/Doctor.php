@@ -12,17 +12,22 @@ class Doctor extends Model
     protected $fillable = [
         'user_id',
         'specialty',
-        'availability',
         'phone',
         'address',
+        'availability'
     ];
 
     protected $casts = [
-        'availability' => 'array',
+        'availability' => 'json'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
     }
 }

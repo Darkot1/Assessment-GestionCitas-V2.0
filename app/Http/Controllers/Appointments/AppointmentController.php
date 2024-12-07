@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Appointments;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Appointment\StoreAppointmentRequest;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class AppointmentController extends Controller
 {
@@ -13,7 +16,12 @@ class AppointmentController extends Controller
      */
     public function index()
     {
-        //
+        if (Auth::user()->role == 'patient') {
+            $appointments = Appointment::where('patient_id', Auth::user()->patient->id)->get();
+        } else {
+            $appointments = Appointment::all();
+        }
+        return Inertia::render('Appointment/IndexAppointment', compact('appointments'));
     }
 
     /**
@@ -21,15 +29,15 @@ class AppointmentController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Appointment/CreateAppointment');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreAppointmentRequest $request)
     {
-        //
+
     }
 
     /**
