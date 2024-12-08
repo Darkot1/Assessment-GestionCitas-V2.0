@@ -55,9 +55,11 @@ This is an appointment management project developed with the Laravel framework.
     npm run dev
     ```
 
+    
+
 ## Usage
 
-To start the development server, run:
+1. To start the development server, run:
 
     ```sh
     php artisan serve
@@ -112,7 +114,7 @@ The system comes with three pre-configured users for testing:
 
 ## Tests
 
-To run the tests, use the following command:
+1. To run the tests, use the following command:
 
     ```sh
     php artisan test
