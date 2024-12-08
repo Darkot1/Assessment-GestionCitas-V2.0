@@ -1,5 +1,5 @@
 <script setup>
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { computed } from 'vue';
 
@@ -72,6 +72,14 @@ const getStatusClass = (status) => ({
     'completed': 'bg-green-100 text-green-800',
     'cancelled': 'bg-red-100 text-red-800'
 }[status] || 'bg-gray-100 text-gray-800');
+
+const cancelAppointment = (appointmentId) => {
+    if (confirm('¿Estás seguro de que deseas cancelar esta cita?')) {
+        router.post(route('appointments.cancel', appointmentId), {
+            _method: 'put'
+        });
+    }
+};
 </script>
 
 <template>
@@ -145,6 +153,7 @@ const getStatusClass = (status) => ({
                                                     Editar
                                                 </Link>
                                                 <button
+                                                    @click="cancelAppointment(appointment.id)"
                                                     class="text-red-600 hover:text-red-900 text-sm"
                                                 >
                                                     Cancelar

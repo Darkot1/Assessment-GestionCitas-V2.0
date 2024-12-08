@@ -24,27 +24,33 @@ const selectRole = (role) => {
 </script>
 
 <template>
-    <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-        <div v-if="$page.props.auth.user.role === 'doctor' || $page.props.auth.user.role === 'patient'"
-             class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6">
-            <p>Ya estás registrado como {{ $page.props.auth.user.role === 'doctor' ? 'doctor' : 'paciente' }}.</p>
-        </div>
-        <h1 class="text-2xl font-semibold text-gray-900 mb-6">Selecciona tu rol</h1>
-        <div class="flex space-x-4">
-            <PrimaryButton
-                @click="selectRole('doctor')"
-                :disabled="$page.props.auth.user.role === 'patient'"
-                :class="{ 'opacity-50 cursor-not-allowed': $page.props.auth.user.role === 'patient' }"
-            >
-                Soy Doctor
-            </PrimaryButton>
-            <PrimaryButton
-                @click="selectRole('patient')"
-                :disabled="$page.props.auth.user.role === 'doctor'"
-                :class="{ 'opacity-50 cursor-not-allowed': $page.props.auth.user.role === 'doctor' }"
-            >
-                Soy Paciente
-            </PrimaryButton>
+    <div class="flex items-center justify-center min-h-screen bg-gray-100">
+        <div class="max-w-md w-full bg-white shadow-md rounded-lg p-6 text-center ">
+            <div v-if="$page.props.auth.user.role === 'admin'"
+                 class="bg-green-50 border-l-4 border-green-400 text-green-700 p-4 mb-4 rounded-lg">
+                <p class="font-semibold">Eres administrador.</p>
+            </div>
+            <div v-else-if="$page.props.auth.user.role === 'doctor' || $page.props.auth.user.role === 'patient'"
+                 class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 p-4 mb-4 rounded-lg">
+                <p class="font-semibold">Ya estás registrado como {{ $page.props.auth.user.role === 'doctor' ? 'doctor' : 'paciente' }}.</p>
+            </div>
+            <div v-else>
+                <h1 class="text-xl font-semibold text-gray-800 mb-4">No tienes rol, regístrate como:</h1>
+                <div class="flex justify-center space-x-4">
+                    <PrimaryButton
+                        @click="selectRole('doctor')"
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300"
+                    >
+                        Soy Doctor
+                    </PrimaryButton>
+                    <PrimaryButton
+                        @click="selectRole('patient')"
+                        class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full transition duration-300"
+                    >
+                        Soy Paciente
+                    </PrimaryButton>
+                </div>
+            </div>
         </div>
     </div>
 </template>

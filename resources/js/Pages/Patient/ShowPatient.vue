@@ -62,10 +62,10 @@ const formatDate = (date) => {
               Editar
             </Link>
             <Link
-              :href="route('patients.index')"
-              class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-gray-700 hover:bg-gray-400"
+              :href="route('appointment-histories.index', { patient_id: patient.id })"
+              class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-white hover:bg-green-700"
             >
-              Volver
+              Historial Médico
             </Link>
           </div>
         </div>

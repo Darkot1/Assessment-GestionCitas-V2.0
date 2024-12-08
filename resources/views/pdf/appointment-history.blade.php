@@ -1,5 +1,3 @@
-<?php
-// resources/views/pdf/appointment-history.blade.php
 <!DOCTYPE html>
 <html>
 <head>

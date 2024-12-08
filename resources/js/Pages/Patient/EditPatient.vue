@@ -1,5 +1,5 @@
 <script setup>
-import { useForm } from '@inertiajs/vue3';
+import { useForm, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -17,7 +17,16 @@ const form = useForm({
 });
 
 const submit = () => {
-  form.put(route('patients.update', props.patient.id));
+  form.put(route('patients.update', props.patient.id), {
+    preserveScroll: true,
+    onSuccess: () => {
+      form.reset();
+    },
+  });
+};
+
+const goBack = () => {
+  router.get(route('appointments.index'));
 };
 </script>
 
@@ -67,9 +76,12 @@ const submit = () => {
               <InputError :message="form.errors.address" class="mt-2" />
             </div>
 
-            <div class="flex items-center justify-end">
+            <div class="flex items-center justify-end space-x-4">
               <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                 Actualizar
+              </PrimaryButton>
+              <PrimaryButton type="button" @click="goBack" class="bg-gray-500 hover:bg-gray-600 text-white">
+                Atrás
               </PrimaryButton>
             </div>
           </form>

@@ -19,12 +19,6 @@ defineProps({
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
           <div class="flex justify-end mb-6">
-            <Link
-              :href="route('patients.create')"
-              class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-white hover:bg-blue-700"
-            >
-              Nuevo Paciente
-            </Link>
           </div>
 
           <table class="min-w-full divide-y divide-gray-200">

@@ -86,8 +86,8 @@ class PatientController extends Controller
         $request->validated();
         $patient->update($request->all());
 
-        return redirect()->route('patients.index')
-            ->with('success', 'Paciente actualizado exitosamente');
+        return back()
+            ->with('success', 'Paciente actualizado exitosamente.');
     }
 
     /**

@@ -39,17 +39,17 @@ class AppointmentController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-{
-    $doctors = Doctor::with(['user', 'availabilities' => function($query) {
-        $query->where('status', 'available')
-            ->orderBy('start_date')
-            ->orderBy('start_time');
-    }])->get();
+    {
+        $doctors = Doctor::with(['user', 'availabilities' => function($query) {
+            $query->where('status', 'available')
+                ->orderBy('start_date')
+                ->orderBy('start_time');
+        }])->get();
 
-    return Inertia::render('Appointment/CreateAppointment', [
-        'doctors' => $doctors
-    ]);
-}
+        return Inertia::render('Appointment/CreateAppointment', [
+            'doctors' => $doctors
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -119,5 +119,42 @@ class AppointmentController extends Controller
     public function destroy(Appointment $appointment)
     {
         //
+    }
+
+    /**
+     * Cancel the specified resource.
+     */
+    public function cancel(Appointment $appointment)
+    {
+        DB::transaction(function() use ($appointment) {
+            // Actualizar el estado de la cita
+            $appointment->update([
+                'status' => 'cancelled'
+            ]);
+
+            // Crear historial
+            AppointmentHistory::create([
+                'appointment_id' => $appointment->id,
+                'patient_id' => $appointment->patient_id,
+                'doctor_id' => $appointment->doctor_id,
+                'action' => 'cancelled',
+                'notes' => 'Cita cancelada'
+            ]);
+
+            // Actualizar disponibilidad
+            $availability = Availability::where('doctor_id', $appointment->doctor_id)
+                ->where('start_date', $appointment->date)
+                ->where('start_time', $appointment->time)
+                ->first();
+
+            if ($availability) {
+                $availability->update([
+                    'status' => 'available'
+                ]);
+            }
+        });
+
+        return redirect()->route('appointments.index')
+            ->with('success', 'Cita cancelada correctamente');
     }
 }

@@ -1,37 +1,38 @@
 <template>
-    <nav class="bg-blue-600 border-b border-blue-700">
+    <nav class="bg-blue-400 border-b border-blue-400">
         <!-- Primary Navigation Menu -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <!-- Logo -->
-
+                    <div class="shrink-0 flex items-center">
+                        <svg class="h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                        </svg>
+                    </div>
 
                     <!-- Navigation Links -->
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Inicio
                         </NavLink>
-                        <NavLink :href="route('appointments.index')" :active="route().current('appointments.index')">
+                        <NavLink v-if="isPatient || isAdmin" :href="route('appointments.index')" :active="route().current('appointments.index')">
                             Citas
                         </NavLink>
-                        <NavLink :href="route('patients.index')" :active="route().current('patients.index')">
+                        <NavLink v-if="isAdmin || isDoctor" :href="route('patients.index')" :active="route().current('patients.index')">
                             Pacientes
                         </NavLink>
-
-                        <!-- Doctor -->
-                        <NavLink :href="route('doctors.index')" :active="route().current('doctors.index')">
+                        <NavLink v-if="isAdmin || isDoctor || isPatient" :href="route('doctors.index')" :active="route().current('doctors.index')">
                             Doctores
                         </NavLink>
-
-                        <!-- Patient -->
-                        <NavLink :href="route('users.index')" :active="route().current('users.index')">
+                        <NavLink v-if="isAdmin || isDoctor" :href="route('availabilities.index')" :active="route().current('availabilities.index')">
+                            Disponibilidad
+                        </NavLink>
+                        <NavLink v-if="isAdmin" :href="route('users.index')" :active="route().current('users.index')">
                             Usuarios
                         </NavLink>
-
-                        <!-- Availability -->
-                        <NavLink :href="route('availabilities.index')" :active="route().current('availabilities.index')">
-                            Disponibilidad
+                        <NavLink v-if="isPatient && patient" :href="route('patients.show', patient.id)" :active="route().current('patients.show')">
+                            Perfil
                         </NavLink>
                     </div>
                 </div>
@@ -95,11 +96,23 @@
                 <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                     Inicio
                 </ResponsiveNavLink>
-                <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                <ResponsiveNavLink v-if="isPatient || isAdmin" :href="route('appointments.index')" :active="route().current('appointments.index')">
                     Citas
                 </ResponsiveNavLink>
-                <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                <ResponsiveNavLink v-if="isAdmin || isDoctor" :href="route('patients.index')" :active="route().current('patients.index')">
                     Pacientes
+                </ResponsiveNavLink>
+                <ResponsiveNavLink v-if="isAdmin || isDoctor || isPatient" :href="route('doctors.index')" :active="route().current('doctors.index')">
+                    Doctores
+                </ResponsiveNavLink>
+                <ResponsiveNavLink v-if="isAdmin || isDoctor" :href="route('availabilities.index')" :active="route().current('availabilities.index')">
+                    Disponibilidad
+                </ResponsiveNavLink>
+                <ResponsiveNavLink v-if="isAdmin" :href="route('users.index')" :active="route().current('users.index')">
+                    Usuarios
+                </ResponsiveNavLink>
+                <ResponsiveNavLink v-if="isPatient && patient" :href="route('patients.show', patient.id)" :active="route().current('patients.show')">
+                    Perfil
                 </ResponsiveNavLink>
             </div>
 
@@ -151,6 +164,20 @@ export default {
             showingNavigationDropdown: false,
         };
     },
+    computed: {
+        isAdmin() {
+            return this.$page.props.auth.user.role === 'admin';
+        },
+        isDoctor() {
+            return this.$page.props.auth.user.role === 'doctor';
+        },
+        isPatient() {
+            return this.$page.props.auth.user.role === 'patient';
+        },
+        patient() {
+            return this.$page.props.auth.user.patient || null;
+        }
+    },
     methods: {
         logout() {
             this.$inertia.post(route('logout'));
@@ -164,23 +191,11 @@ nav {
     transition: background-color 0.3s ease;
 }
 
-nav:hover {
-    background-color: #2563eb;
-}
-
 button {
     transition: transform 0.2s ease;
 }
 
 button:hover {
     transform: scale(1.05);
-}
-
-img {
-    transition: border 0.3s ease;
-}
-
-img:hover {
-    border: 2px solid #4a5568;
 }
 </style>
