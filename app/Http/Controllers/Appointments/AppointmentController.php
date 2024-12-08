@@ -23,7 +23,13 @@ class AppointmentController extends Controller
         $query = Appointment::with(['doctor.user', 'patient.user']);
 
         if (Auth::user()->role === 'patient') {
-            $query->where('patient_id', Auth::user()->patient->id);
+            // Verificar si el usuario tiene un perfil de paciente
+            $patient = Auth::user()->patient;
+            if (!$patient) {
+                return redirect()->route('patients.create')
+                    ->with('error', 'Necesitas completar tu perfil de paciente primero.');
+            }
+            $query->where('patient_id', $patient->id);
         } elseif (Auth::user()->role === 'doctor') {
             $query->where('doctor_id', Auth::user()->doctor->id);
         }

@@ -5,14 +5,63 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 defineProps({
   user: Object,
 });
+
+const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString('es-ES');
+};
+
+const formatTime = (timeString) => {
+  return new Date(`2000-01-01T${timeString}`).toLocaleTimeString('es-ES', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
+const getStatusText = (status) => {
+  const statusMap = {
+    'available': 'Disponible',
+    'booked': 'Reservado',
+    'unavailable': 'No Disponible',
+    'cancelled': 'Cancelado',
+    'completed': 'Completado'
+  };
+  return statusMap[status] || status;
+};
+
+const getStatusClass = (status) => {
+  const statusClasses = {
+    'available': 'bg-green-100 text-green-800',
+    'booked': 'bg-blue-100 text-blue-800',
+    'unavailable': 'bg-gray-100 text-gray-800',
+    'cancelled': 'bg-red-100 text-red-800',
+    'completed': 'bg-purple-100 text-purple-800'
+  };
+  return statusClasses[status] || 'bg-gray-100 text-gray-800';
+};
 </script>
 
 <template>
   <AppLayout title="Ver Usuario">
     <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        Detalles del Usuario
-      </h2>
+      <div class="flex justify-between items-center">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+          Detalles del Usuario
+        </h2>
+        <div class="flex space-x-3">
+          <Link
+            :href="route('users.edit', user.id)"
+            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          >
+            Editar
+          </Link>
+          <Link
+            :href="route('users.index')"
+            class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+          >
+            Volver
+          </Link>
+        </div>
+      </div>
     </template>
 
     <div class="py-12">
@@ -33,8 +82,32 @@ defineProps({
               <p><strong>Especialidad:</strong> {{ user.doctor.specialty }}</p>
               <p><strong>Teléfono:</strong> {{ user.doctor.phone }}</p>
               <p><strong>Dirección:</strong> {{ user.doctor.address }}</p>
-              <p><strong>Disponibilidad:</strong></p>
-              <pre>{{ JSON.stringify(user.doctor.availability, null, 2) }}</pre>
+
+              <!-- Sección de Horarios -->
+              <div v-if="user.doctor.availabilities && user.doctor.availabilities.length > 0" class="mt-4">
+                <h4 class="text-md font-medium text-gray-900 mb-2">Horarios Disponibles:</h4>
+                <div class="grid gap-4">
+                  <div v-for="availability in user.doctor.availabilities" :key="availability.id"
+                       class="border rounded-lg p-4">
+                    <div class="flex justify-between items-center mb-2">
+                      <span class="font-medium">
+                        {{ formatDate(availability.start_date) }}
+                      </span>
+                      <span :class="`px-2 py-1 rounded-full text-sm ${getStatusClass(availability.status)}`">
+                        {{ getStatusText(availability.status) }}
+                      </span>
+                    </div>
+                    <p>
+                      <strong>Horario:</strong>
+                      {{ formatTime(availability.start_time) }} - {{ formatTime(availability.end_time) }}
+                    </p>
+                    <p v-if="availability.reason" class="text-sm text-gray-600 mt-1">
+                      <strong>Motivo:</strong> {{ availability.reason }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <p v-else class="text-gray-600 mt-2">No hay horarios configurados</p>
             </div>
           </div>
 
@@ -45,21 +118,6 @@ defineProps({
               <p><strong>Teléfono:</strong> {{ user.patient.phone }}</p>
               <p><strong>Dirección:</strong> {{ user.patient.address }}</p>
             </div>
-          </div>
-
-          <div class="flex justify-end mt-6">
-            <Link
-              :href="route('users.edit', user.id)"
-              class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-3"
-            >
-              Editar
-            </Link>
-            <Link
-              :href="route('users.index')"
-              class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-            >
-              Volver
-            </Link>
           </div>
         </div>
       </div>

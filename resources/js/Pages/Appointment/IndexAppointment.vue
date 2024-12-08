@@ -15,11 +15,11 @@ const pageTitle = computed(() => {
 });
 
 const groupedAppointments = computed(() => {
-    if (!props.appointments) return [];
+    if (!props.appointments || props.appointments.length === 0) return [];
 
     if (userRole.value !== 'admin') {
         return [{
-            patient: props.appointments[0]?.patient,
+            patient: props.appointments[0]?.patient || null,
             appointments: props.appointments
         }];
     }

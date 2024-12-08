@@ -56,7 +56,10 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $user = User::with(['doctor', 'patient'])->find($user->id);
+        $user = User::with([
+            'doctor.availabilities', 
+            'patient'
+        ])->find($user->id);
 
         return Inertia::render('User/ShowUser', compact('user'));
     }

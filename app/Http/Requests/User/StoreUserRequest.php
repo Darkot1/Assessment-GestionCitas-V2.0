@@ -9,8 +9,7 @@ class StoreUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // return Auth::user()->role === 'admin'; cambiar
-        return true;
+        return Auth::user()->role === 'admin';
 
     }
 
