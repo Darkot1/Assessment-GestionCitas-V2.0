@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Appointment;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreAppointmentRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreAppointmentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::check() && Auth::user()->role === 'patient' || Auth::user()->role === 'admin';
     }
 
     /**
@@ -22,7 +23,10 @@ class StoreAppointmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'doctor_id' => 'required|exists:doctors,id',
+            'availability_id' => 'required|exists:availabilities,id',
+            'reason' => 'required|string|max:255',
+            'notes' => 'nullable|string'
         ];
     }
 }

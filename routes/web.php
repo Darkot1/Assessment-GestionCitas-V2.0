@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentHistories\AppointmentHistoryController;
 use App\Http\Controllers\Appointments\AppointmentController;
 use App\Http\Controllers\Availabilities\AvailabilityController;
 use Illuminate\Foundation\Application;
@@ -84,5 +85,12 @@ Route::middleware([
         Route::put('/{availability}', [AvailabilityController::class, 'update'])->name('availabilities.update');
         Route::delete('/{availability}', [AvailabilityController::class, 'destroy'])->name('availabilities.destroy');
     });
+
+    Route::prefix('historial')->group(function () {
+        Route::get('/', [AppointmentHistoryController::class, 'index'])->name('appointment-histories.index');
+        Route::get('/{history}', [AppointmentHistoryController::class, 'show'])->name('appointment-histories.show');
+        Route::get('/{history}/pdf', [AppointmentHistoryController::class, 'downloadPdf'])->name('appointment-histories.pdf');
+    });
+
 
 });

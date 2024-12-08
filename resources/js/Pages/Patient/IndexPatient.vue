@@ -51,6 +51,12 @@ defineProps({
                     Ver
                   </Link>
                   <Link
+                    :href="route('appointment-histories.index', { patient_id: patient.id })"
+                    class="text-green-600 hover:text-green-900 mr-3"
+                  >
+                    Historial Médico
+                  </Link>
+                  <Link
                     v-if="$page.props.auth.user.role === 'admin' || $page.props.auth.user.id === patient.user_id"
                     :href="route('patients.edit', patient.id)"
                     class="text-indigo-600 hover:text-indigo-900"

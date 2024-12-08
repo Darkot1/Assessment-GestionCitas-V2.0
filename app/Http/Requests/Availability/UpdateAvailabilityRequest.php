@@ -24,7 +24,7 @@ class UpdateAvailabilityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required|in:available,booked,unavailable','cancelled', 'completed',
+            'status' => 'required|in:available,booked,unavailable,cancelled,completed',
             'reason' => 'nullable|string|max:255',
         ];
     }

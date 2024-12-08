@@ -10,6 +10,7 @@ use App\Models\Doctor;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class AvailabilityController extends Controller
 {
@@ -52,7 +53,7 @@ class AvailabilityController extends Controller
         $availabilitySlots[] = $startTime->format('H:i');
         $startTime->addMinutes(45);
     }
-    
+
     // Guardar la disponibilidad
     foreach ($availabilitySlots as $availabilitySlot) {
         Availability::create([
@@ -105,16 +106,13 @@ class AvailabilityController extends Controller
 
         $validated = $request->validated();
 
-        if (in_array($validated['status'], ['completed', 'cancelled'])) {
-            $availability->delete();
-            return redirect()
-                ->route('availabilities.index')
-                ->with('success', 'Disponibilidad ' .
-                    ($validated['status'] === 'completed' ? 'completada' : 'cancelada') .
-                    ' y eliminada correctamente');
-        }
+        DB::transaction(function() use ($validated, $availability) {
+            $availability->update($validated);
 
-        $availability->update($validated);
+            if (in_array($validated['status'], ['completed', 'cancelled'])) {
+                $availability->delete();
+            }
+        });
 
         return redirect()
             ->route('availabilities.index')

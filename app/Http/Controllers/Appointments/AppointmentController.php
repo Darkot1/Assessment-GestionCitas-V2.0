@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Appointments;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Appointment\StoreAppointmentRequest;
 use App\Models\Appointment;
+use App\Models\AppointmentHistory;
+use App\Models\Availability;
+use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AppointmentController extends Controller
@@ -16,28 +20,73 @@ class AppointmentController extends Controller
      */
     public function index()
     {
-        if (Auth::user()->role == 'patient') {
-            $appointments = Appointment::where('patient_id', Auth::user()->patient->id)->get();
-        } else {
-            $appointments = Appointment::all();
+        $query = Appointment::with(['doctor.user', 'patient.user']);
+
+        if (Auth::user()->role === 'patient') {
+            $query->where('patient_id', Auth::user()->patient->id);
+        } elseif (Auth::user()->role === 'doctor') {
+            $query->where('doctor_id', Auth::user()->doctor->id);
         }
-        return Inertia::render('Appointment/IndexAppointment', compact('appointments'));
+
+        $appointments = $query->latest()->get();
+
+        return Inertia::render('Appointment/IndexAppointment', [
+            'appointments' => $appointments
+        ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        return Inertia::render('Appointment/CreateAppointment');
-    }
+{
+    $doctors = Doctor::with(['user', 'availabilities' => function($query) {
+        $query->where('status', 'available')
+            ->orderBy('start_date')
+            ->orderBy('start_time');
+    }])->get();
+
+    return Inertia::render('Appointment/CreateAppointment', [
+        'doctors' => $doctors
+    ]);
+}
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreAppointmentRequest $request)
     {
+        $availability = Availability::findOrFail($request->availability_id);
 
+        DB::transaction(function() use ($request, $availability) {
+            // Crear la cita
+            $appointment = Appointment::create([
+                'patient_id' => Auth::user()->patient->id,
+                'doctor_id' => $request->doctor_id,
+                'date' => $availability->start_date,
+                'time' => $availability->start_time,
+                'reason' => $request->reason,
+                'notes' => $request->notes,
+                'status' => 'scheduled'
+            ]);
+
+            // Actualizar disponibilidad
+            $availability->update([
+                'status' => 'booked'
+            ]);
+
+            // Crear historial
+            AppointmentHistory::create([
+                'appointment_id' => $appointment->id,
+                'patient_id' => $appointment->patient_id,
+                'doctor_id' => $appointment->doctor_id,
+                'action' => 'created',
+                'notes' => 'Cita programada'
+            ]);
+        });
+
+        return redirect()->route('appointments.index')
+            ->with('success', 'Cita programada correctamente');
     }
 
     /**
