@@ -63,6 +63,12 @@ defineProps({
                   >
                     Editar
                   </Link>
+                  <Link
+                    :href="route('availabilities.show', doctor.id)"
+                    class="text-green-600 hover:text-green-900"
+                  >
+                    Disponibilidad
+                  </Link>
                 </td>
               </tr>
             </tbody>

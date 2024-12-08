@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('end_date')->nullable();
             $table->time('start_time');
             $table->time('end_time');
-            $table->enum('status', ['available', 'booked', 'unavailable'])->default('available');
+            $table->enum('status', ['available', 'booked', 'unavailable','cancelled', 'completed'])->default('available');
             $table->string('reason', 255)->nullable();
             $table->timestamps();
             $table->softDeletes();

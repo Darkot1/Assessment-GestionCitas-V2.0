@@ -28,6 +28,11 @@
                         <NavLink :href="route('users.index')" :active="route().current('users.index')">
                             Usuarios
                         </NavLink>
+
+                        <!-- Availability -->
+                        <NavLink :href="route('availabilities.index')" :active="route().current('availabilities.index')">
+                            Disponibilidad
+                        </NavLink>
                     </div>
                 </div>
 

@@ -89,11 +89,6 @@ class UserController extends Controller
 
         // Si cambia a doctor o ya es doctor
         if ($request->role === 'doctor') {
-            // Eliminar registro de paciente si existe
-            if ($user->patient) {
-                $user->patient->delete();
-            }
-
             // Actualizar o crear doctor
             $doctorData = [
                 'specialty' => $request->specialty,
@@ -113,11 +108,6 @@ class UserController extends Controller
 
         // Si cambia a paciente o ya es paciente
         if ($request->role === 'patient') {
-            // Eliminar registro de doctor si existe
-            if ($user->doctor) {
-                $user->doctor->delete();
-            }
-
             $patientData = [
                 'date_of_birth' => $request->date_of_birth,
                 'phone' => $request->phone,
@@ -134,15 +124,6 @@ class UserController extends Controller
             }
         }
 
-        // Si cambia a admin, eliminar roles anteriores
-        if ($request->role === 'admin') {
-            if ($user->doctor) {
-                $user->doctor->delete();
-            }
-            if ($user->patient) {
-                $user->patient->delete();
-            }
-        }
 
         return redirect()->route('users.index')
             ->with('success', 'Usuario actualizado exitosamente.');

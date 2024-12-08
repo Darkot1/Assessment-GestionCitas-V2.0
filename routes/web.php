@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Appointments\AppointmentController;
+use App\Http\Controllers\Availabilities\AvailabilityController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -50,7 +51,7 @@ Route::middleware([
         Route::delete('/{doctor}', [DoctorController::class, 'destroy'])->name('doctors.destroy');
     });
 
-    Route::prefix('Paciente')->group(function () {
+    Route::prefix('paciente')->group(function () {
         Route::get('/', [PatientController::class, 'index'])->name('patients.index');
         Route::get('/registrar', [PatientController::class, 'create'])->name('patients.create');
         Route::post('/store', [PatientController::class, 'store'])->name('patients.store');
@@ -70,5 +71,18 @@ Route::middleware([
         Route::delete('/{appointment}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
     });
 
+    Route::prefix('disponibilidad')->group(function () {
+        Route::get('/', [AvailabilityController::class, 'index'])->name('availabilities.index');
+
+        // Rutas estáticas primero
+        Route::get('/registrar', [AvailabilityController::class, 'create'])->name('availabilities.create');
+        Route::post('/store', [AvailabilityController::class, 'store'])->name('availabilities.store');
+
+        // Rutas con parámetros después
+        Route::get('/doctor/{doctor}', [AvailabilityController::class, 'show'])->name('availabilities.show');
+        Route::get('/editar/{availability}', [AvailabilityController::class, 'edit'])->name('availabilities.edit');
+        Route::put('/{availability}', [AvailabilityController::class, 'update'])->name('availabilities.update');
+        Route::delete('/{availability}', [AvailabilityController::class, 'destroy'])->name('availabilities.destroy');
+    });
 
 });
